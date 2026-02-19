@@ -4,7 +4,7 @@ An AI-powered agent system for scanning and scoring job opportunities from the R
 
 ## Features
 
-- **AI-Powered Scoring**: Uses Grok-3-mini-fast to score job opportunities on a scale of 0-100
+- **AI-Powered Scoring**: Uses Grok-4-1-fast-reasoning to score job opportunities on a scale of 0-100
 - **Smart Caching**: Caches results for 12 hours to avoid redundant API calls
 - **Telegram Integration**: Sends top opportunities directly to your Telegram
 - **CLI Interface**: Run scans from the command line with various options
