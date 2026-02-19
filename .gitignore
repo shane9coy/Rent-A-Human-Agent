@@ -1,0 +1,59 @@
+# Claude Code files - ignore these as they're personal config
+.claude/settings.local.json
+.claude/user_profile.json
+.claude/example_user_profile.json
+.claude/voice-config.json
+
+# KiloCode files - ignore these as they're personal config
+.kilocode/settings.json
+.kilocode/user_profile.json
+.kilocode/voice-config.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+ENV/
+env/
+
+# Environment
+.env
+.env.local
+*.env
+
+# Logs
+logs/*.json
+logs/*.log
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp
+tempCodeRunnerFile.py
+*.tmp

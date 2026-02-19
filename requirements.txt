@@ -1,0 +1,10 @@
+# Rent-A-Human-Agent Requirements
+
+# HTTP requests
+requests>=2.28.0
+
+# Environment variables
+python-dotenv>=0.19.0
+
+# Optional: For enhanced JSON handling (included in Python 3.9+)
+# ultralytics>=8.0.0  # Uncomment if needed for ML features
