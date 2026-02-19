@@ -21,8 +21,6 @@
       "mcp__calendar__delete_event",
       "mcp__calendar__search_events",
       "mcp__calendar__list_calendars",
-      "mcp__voicemode__converse",
-      "mcp__voicemode__service",
       "mcp__natal__generate_chart_report",
       "mcp__natal__create_natal_chart",
       "mcp__natal__create_transit_chart",
@@ -30,11 +28,6 @@
       "mcp__natal__create_solar_return_chart",
       "mcp__natal__get_chart_data",
       "mcp__natal__get_chart_statistics",
-      "mcp__voice__voice_listen",
-      "mcp__voice__voice_speak",
-      "mcp__voice__voice_switch",
-      "mcp__voice__voice_status",
-      "mcp__voice__voice_detect_intent",
       "mcp__playwright__navigate",
       "mcp__playwright__screenshot",
       "mcp__playwright__click",
@@ -76,12 +69,16 @@
   "mcpServers": {
     "gmail": {
       "command": "node",
-      "args": ["~/mcp-servers/gmail/gmail-mcp-server.js"],
+      "args": [
+        "~/mcp-servers/gmail/gmail-mcp-server.js"
+      ],
       "cwd": "~"
     },
     "calendar": {
       "command": "node",
-      "args": ["~/mcp-servers/gmail/calendar-mcp-server.js"],
+      "args": [
+        "~/mcp-servers/gmail/calendar-mcp-server.js"
+      ],
       "cwd": "~"
     },
     "natal": {
@@ -91,16 +88,11 @@
     },
     "weather": {
       "command": "python",
-      "args": ["-m", "mcp_weather_server"],
+      "args": [
+        "-m",
+        "mcp_weather_server"
+      ],
       "cwd": "~/mcp-servers/weather"
-    },
-    "magi3-mcp-voice-server": {
-      "command": "node",
-      "args": ["~//mcp-servers/magi3-mcp-voice-server/src/index.js"],
-      "env": {
-        "ELEVENLABS_API_KEY": "${ELEVENLABS_API_KEY}",
-        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
-      }
     },
     "playwright-main": {
       "command": "npx",
@@ -109,12 +101,12 @@
         "@playwright/test@latest",
         "mcp",
         "--browser=chromium",
-        "--storage-state=~//.playwright-state/main.json",
+        "--storage-state=~/.playwright-state/main.json",
         "--slow-mo=150",
         "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       ],
       "env": {
-        "PLAYWRIGHT_BROWSERS_PATH": "~//.cache/ms-playwright",
+        "PLAYWRIGHT_BROWSERS_PATH": "~/.cache/ms-playwright",
         "DEBUG": "pw:api"
       },
       "transport": "stdio"
@@ -126,13 +118,13 @@
         "@playwright/test@latest",
         "mcp",
         "--browser=chromium",
-        "--storage-state=~//.playwright-state/shopping.json",
+        "--storage-state=~/.playwright-state/shopping.json",
         "--slow-mo=180",
         "--viewport-size=1920,1080",
         "--color-scheme=light"
       ],
       "env": {
-        "PLAYWRIGHT_BROWSERS_PATH": "~//.cache/ms-playwright"
+        "PLAYWRIGHT_BROWSERS_PATH": "~/.cache/ms-playwright"
       },
       "transport": "stdio"
     },
@@ -143,13 +135,13 @@
         "@playwright/test@latest",
         "mcp",
         "--browser=chromium",
-        "--storage-state=~//.playwright-state/travel.json",
+        "--storage-state=~/.playwright-state/travel.json",
         "--slow-mo=200",
         "--viewport-size=1920,1080",
         "--timezone-id=America/New_York"
       ],
       "env": {
-        "PLAYWRIGHT_BROWSERS_PATH": "~//.cache/ms-playwright"
+        "PLAYWRIGHT_BROWSERS_PATH": "~/.cache/ms-playwright"
       },
       "transport": "stdio"
     },
@@ -160,20 +152,22 @@
         "@playwright/test@latest",
         "mcp",
         "--browser=chromium",
-        "--storage-state=~//.playwright-state/reservations.json",
+        "--storage-state=~/.playwright-state/reservations.json",
         "--slow-mo=150",
         "--viewport-size=1920,1080"
       ],
       "env": {
-        "PLAYWRIGHT_BROWSERS_PATH": "~//.cache/ms-playwright"
+        "PLAYWRIGHT_BROWSERS_PATH": "~/.cache/ms-playwright"
       },
       "transport": "stdio"
     },
     "playwright-enhanced": {
       "command": "node",
-      "args": ["~//.playwright-enhanced/server.js"],
+      "args": [
+        "~/.playwright-enhanced/server.js"
+      ],
       "env": {
-        "STORAGE_STATE": "~//.playwright-state/enhanced.json",
+        "STORAGE_STATE": "~/.playwright-state/enhanced.json",
         "HEADLESS": "false",
         "SLOW_MO": "200",
         "BROWSER": "chromium",
@@ -186,9 +180,12 @@
       "transport": "stdio"
     },
     "telegram": {
-      "command": "~//mcp-servers/telegram-mcp/.venv/bin/python",
-      "args": ["-m", "main"],
-      "cwd": "~//mcp-servers/telegram-mcp",
+      "command": "~/mcp-servers/telegram-mcp/.venv/bin/python",
+      "args": [
+        "-m",
+        "main"
+      ],
+      "cwd": "~/mcp-servers/telegram-mcp",
       "env": {
         "TELEGRAM_API_ID": "${TELEGRAM_API_ID}",
         "TELEGRAM_API_HASH": "${TELEGRAM_API_HASH}",
@@ -200,15 +197,13 @@
     },
     "rentahuman": {
       "command": "npx",
-      "args": ["-y", "rentahuman-mcp"],
+      "args": [
+        "-y",
+        "rentahuman-mcp"
+      ],
       "env": {
         "RENTAHUMAN_API_KEY": "${RENTAHUMAN_API_KEY}"
       }
     }
-  },
-   "voiceMode": {
-    "listen_duration_min": 10,
-    "listen_duration_max": 60,
-    "vad_aggressiveness": 4,
-    "disable_silence_detection": false
-}3
+  }
+}
