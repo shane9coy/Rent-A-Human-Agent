@@ -1,10 +1,9 @@
 # RENT-A-HUMAN-AGENT
 
-💰 **An agentic CLI that scans Rentahuman.ai in real time via MCP + API.** (OpenClaw portable 🦞)
-
-🧠 **Custom [Grok](https://x.ai)-powered framework that filters spam, ranks by your location + skills + how easy the cash is, and beams the winners straight to your Telegram, terminal, or MCP messenger of your choice.**
-
-🎮 **Bringing the power of robot bounty hunting to the everyday player.**
+🤖💰 **An agentic CLI that scans Rentahuman.ai in real time via MCP + API.** </br>
+🧠 **Custom [Grok](https://x.ai)-powered job hunting Bounty Hunter that filters spam, ranks by your location + skills + how easy the cash is, and beams the winners straight to your Telegram, terminal, or MCP messenger of your choice.** </br>
+🎮 **Bringing the power of robot bounty hunting to the everyday player.** </br>
+🦞 OpenClaw version: git remote add origin https://github.com/shane9coy/Rent-A-Human-Agent-Openclaw
 
 <img width="1053" height="1138" alt="rentahumanagent" src="https://github.com/user-attachments/assets/590943eb-6649-4296-bdd8-5e5a08add654" />
 
@@ -15,6 +14,14 @@ This 'drag & drop' agentic system is ready to be powered by your favorite CLI ag
 The agent features Rent-A-Human MCP server access (bring your own key), a customizable `/rent` agent mode in your CLI editor, the modern `.claude` SKILLS framework, and AI-powered bounty scoring using Grok-4-1-fast-reasoning to search, filter spam, evaluate, and rank opportunities.
 
 ## Features
+
+- 🔍 **Scan Bounties** - Find and score job opportunities based on your location and skills
+- 🧑‍💼 **Browse Humans** - View available humans for hire with skills and rates
+- 💼 **View Bounties** - See open jobs and opportunities
+- 📝 **Post Jobs** - Create new bounties directly from Telegram
+- 🎯 **Smart Scanning** - AI-scored opportunity recommendations
+- 🔒 **Private** - Bot only responds to your user ID
+- 🔗 **MCP + API Integration** - Direct connection to official RentAHuman.ai MCP
 
 - **Rent-A-Human MCP Server Integration**: Full agentic access to the RentAHuman.ai platform
 - **CLI Interface**: Fully customizable `/rent` agent mode
