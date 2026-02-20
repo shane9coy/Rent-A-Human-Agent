@@ -1,7 +1,9 @@
 # RENT-A-HUMAN-AGENT
 
-💰 **An agentic CLI that scans Rentahuman.ai in real time via MCP + API.**
-🧠 **Custom [Grok](https://x.ai)-powered framework that filters spam, ranks by your location + skills + how easy the cash is, and beams the winners straight to your Telegram, terminal, or messenger of choice.**
+💰 **An agentic CLI that scans Rentahuman.ai in real time via MCP + API.** 
+
+🧠 **Custom [Grok](https://x.ai)-powered framework that filters spam, ranks by your location + skills + how easy the cash is, and beams the winners straight to your Telegram.**
+
 🎮 **Bringing the power of robot bounty hunting to the everyday player.**
 
 <img width="1053" height="1138" alt="rentahumanagent" src="https://github.com/user-attachments/assets/590943eb-6649-4296-bdd8-5e5a08add654" />
