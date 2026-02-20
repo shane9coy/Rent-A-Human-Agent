@@ -1,11 +1,16 @@
+# RENT-A-HUMAN-AGENT
 
-"The SNES classic that never was... now available as a Python CLI tool."
+💰 **An agentic CLI that scans Rentahuman.ai in real time via MCP + API.**
 
-Introducing RENT-A-HUMAN-AGENT, bringing the power of robot bounty hunting to the everyday player.
+🧠 Custom [Grok](https://x.ai)-powered framework that filters spam, ranks by your location + skills + how easy the cash is, and beams the winners straight to your Telegram, terminal, or messenger of choice.
 
-This is 'drag & drop' agentic system is ready to be powerd by your favorite CLI agent. Built for scanning and scoring job opportunities on Rentahuman.ai platform via MCP and API framework. Custom bounty_hunting script utilizes Grok AI to evaluate, filter spam, and rank bounties based on your location, skills, and ease of use to help you find the best opportunities for easy cash (Denji & Pochita approved. Your wallet, next) !
+🎮 Bringing the power of robot bounty hunting to the everyday player.
 
 <img width="1053" height="1138" alt="rentahumanagent" src="https://github.com/user-attachments/assets/590943eb-6649-4296-bdd8-5e5a08add654" />
+
+## What It Does
+
+This 'drag & drop' agentic system is ready to be powered by your favorite CLI agent. Built for scanning and scoring job opportunities on the [Rentahuman.ai](https://rentahuman.ai) platform via MCP and API framework. The custom `bounty_hunter` script utilizes Grok AI to evaluate, filter spam, and rank bounties based on your location, skills, and ease of completion — helping you find the best opportunities for easy cash.
 
 The agent features Rent-A-Human MCP server access (bring your own key), a customizable `/rent` agent mode in your CLI editor, the modern `.claude` SKILLS framework, and AI-powered bounty scoring using Grok-4-1-fast-reasoning to search, filter spam, evaluate, and rank opportunities.
 
@@ -16,6 +21,7 @@ The agent features Rent-A-Human MCP server access (bring your own key), a custom
 - **AI-Powered Scoring**: Uses Grok-4-1-fast-reasoning to score job opportunities on a scale of 0-100
 - **Smart Caching**: Caches results for 12 hours to avoid redundant API calls
 - **Telegram Integration**: Sends top opportunities directly to your Telegram
+- **Drag & Drop Skills**: Compatible with Claude Code and OpenClaw — drop the `.claude/skills/` folder into any project
 - **Multiple Scan Modes**:
   - Cached mode (fast, uses existing scores)
   - Force fresh scoring (bypass cache)
@@ -94,6 +100,10 @@ The project includes Claude Code skill definitions in `.claude/skills/rent/`. To
 1. Copy the `.claude` folder to your Claude Code project (or use this repo as your project)
 2. Use the `/rent` command to trigger scans and access all features
 
+### OpenClaw / ClawHub
+
+The skills in `.claude/skills/` are drag & drop compatible. Copy the `rent/` skill folder into any OpenClaw-compatible agent to add bounty hunting capabilities.
+
 ### Cron Setup
 
 To run automatically every 12 hours:
@@ -134,4 +144,4 @@ MIT License - see LICENSE file for details.
 
 ## Author
 
-Built by: [x.com/@shaneswrld_](https://x.com/shaneswrld_) | [github.com/shane9coy](https://github.com/shane9coy)
+Built by [@shaneswrld_](https://x.com/shaneswrld_) | [github.com/shane9coy](https://github.com/shane9coy)
