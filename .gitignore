@@ -43,6 +43,11 @@ env/
 logs/*.json
 logs/*.log
 *.log
+logs/
+
+# Skill cache
+.claude/skills/rent/cache/
+.claude/logs/
 
 # OS
 .DS_Store
