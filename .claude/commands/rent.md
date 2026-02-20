@@ -3,13 +3,13 @@ name: rent
 description: Rent-A-Human-Agent - Delegate tasks to real humans via RentAHuman.ai MCP server. Search for humans, manage bounties, handle conversations, and delegate complex tasks that AI cannot complete.
 ---
 
-**IMPORTANT: When this command is invoked, IMMEDIATELY print the command menu below FIRST, then ask the user what they'd like to do. Do not skip the menu.**
+## IMPORTANT  When this command is invoked, IMMEDIATELY print the command menu below FIRST, then ask the user what they'd like to do. Do not skip the menu.**
 
 ## On Invoke — Print This Menu
 
 When the user runs `/rent` (with no arguments), display this exact block:
 
-```
+
 RENT-A-HUMAN
 
 /rent                — Browse available humans
@@ -37,7 +37,7 @@ If the user passes an argument (e.g. `/rent scan`), skip the menu and execute th
 When the user runs any `/rent scan` variant, **execute the bounty scanner script** and display the results:
 
 ```bash
-python3 "/Users/sc/News Letter/bounty_hunter.py"
+python3 .claude/skills/rent/scripts/bounty_hunter.py
 ```
 
 The scanner:
@@ -191,7 +191,7 @@ python hire_team.py profile <human_id>
 from hire_team import create_bounty, start_conversation, send_message, search_humans, list_skills
 ```
 
-**Location:** `/Users/sc/News Letter/hire_team.py`
+**Note:** `hire_team.py` is an optional external CLI tool. The primary interface is the MCP server via `/rent` commands.
 
 ## Rate Limits
 

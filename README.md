@@ -1,14 +1,19 @@
 # Rent-A-Human-Agent
 
-An AI-powered agent system for scanning and scoring job opportunities from the Rent-A-Human platform. The agent uses Grok AI to evaluate and rank bounties, helping you find the best opportunities.
+Rent-A-Human-Agent utilizes modern agentic architecture with the Rent-A-Human API + MCP framework, built for scanning and scoring job opportunities in real-time on the RentAHuman.ai platform. The entire project is contained in a single `.claude` folder, ready to be dropped into any agentic workflow or project.
+
+<img width="1053" height="1138" alt="rentahumanagent" src="https://github.com/user-attachments/assets/590943eb-6649-4296-bdd8-5e5a08add654" />
+
+The agent features Rent-A-Human MCP server access (bring your own key), a customizable `/rent` agent mode in your CLI editor, the modern `.claude` SKILLS framework, and AI-powered bounty scoring using Grok-4-1-fast-reasoning to search, filter spam, evaluate, and rank opportunities.
 
 ## Features
 
+- **Rent-A-Human MCP Server Integration**: Full agentic access to the RentAHuman.ai platform
+- **CLI Interface**: Fully customizable `/rent` agent mode
 - **AI-Powered Scoring**: Uses Grok-4-1-fast-reasoning to score job opportunities on a scale of 0-100
 - **Smart Caching**: Caches results for 12 hours to avoid redundant API calls
 - **Telegram Integration**: Sends top opportunities directly to your Telegram
-- **CLI Interface**: Run scans from the command line with various options
-- **Multiple Scan Modes**: 
+- **Multiple Scan Modes**:
   - Cached mode (fast, uses existing scores)
   - Force fresh scoring (bypass cache)
   - List all open jobs
@@ -19,20 +24,28 @@ An AI-powered agent system for scanning and scoring job opportunities from the R
 ```
 Rent-A-Human-Agent/
 ├── .claude/              # Claude Code configurations
+│   ├── CLAUDE.md         # Project-specific system prompt
+│   ├── settings.json     # MCP server configuration
 │   ├── commands/         # CLI command definitions
+│   │   └── rent.md       # /rent command reference
 │   └── skills/           # Claude skills
 │       └── rent/         # Rent-A-Human skill
+│           ├── SKILL.md  # Skill triggers and quick reference
+│           ├── cache/    # Cache files (auto-created)
+│           │   ├── bounties_cache.json    # Scored bounties (JSON)
+│           │   └── bounties_ranked.txt    # Human-readable output
 │           └── scripts/
 │               └── bounty_hunter.py  # Main scanner script
-├── .kilocode/            # KiloCode configurations (mirrors .claude)
-└── logs/                 # Cache and log files
+├── logs/                 # Log files (optional)
+├── .env                  # API keys (create from template)
+└── requirements.txt      # Python dependencies
 ```
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/Rent-A-Human-Agent.git
+git clone https://github.com/shane9coy/Rent-A-Human-Agent.git
 cd Rent-A-Human-Agent
 ```
 
@@ -44,9 +57,10 @@ pip install -r requirements.txt
 3. Set up environment variables:
 ```bash
 # Create a .env file with your API keys
-GROK_API_KEY=your_grok_api_key
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
+RENTAHUMAN_API_KEY=your_rentahuman_api_key    # Required: from rentahuman.ai/dashboard
+XAI_API_KEY=your_xai_api_key                  # Required: from x.ai for Grok scoring
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token    # Optional: for Telegram notifications
+TELEGRAM_CHAT_ID=your_chat_id                 # Optional: for Telegram notifications
 ```
 
 ## Usage
@@ -54,28 +68,28 @@ TELEGRAM_CHAT_ID=your_chat_id
 ### Command Line
 
 ```bash
-# Normal scan (uses cache)
-python bounty_hunter.py
+# Normal scan (uses cache if fresh)
+python3 .claude/skills/rent/scripts/bounty_hunter.py
 
-# Force fresh scoring
-python bounty_hunter.py --force
+# Force fresh scoring (bypass 12-hour cache)
+python3 .claude/skills/rent/scripts/bounty_hunter.py --force
 
 # List all open jobs (no scoring)
-python bounty_hunter.py --jobs
+python3 .claude/skills/rent/scripts/bounty_hunter.py --jobs
 
-# List available humans
-python bounty_hunter.py --humans
+# List available humans for hire
+python3 .claude/skills/rent/scripts/bounty_hunter.py --humans
 
 # Skip Telegram notification
-python bounty_hunter.py --no-telegram
+python3 .claude/skills/rent/scripts/bounty_hunter.py --no-telegram
 ```
 
 ### Claude Code Integration
 
 The project includes Claude Code skill definitions in `.claude/skills/rent/`. To use with Claude Code:
 
-1. Copy the `.claude` folder to your Claude Code project
-2. Use the `/rent` command to trigger scans
+1. Copy the `.claude` folder to your Claude Code project (or use this repo as your project)
+2. Use the `/rent` command to trigger scans and access all features
 
 ### Cron Setup
 
@@ -83,28 +97,33 @@ To run automatically every 12 hours:
 
 ```bash
 # Add to your crontab
-0 8,20 * * * cd /path/to/Rent-A-Human-Agent && python3 bounty_hunter.py >> logs/bounty_hunter.log 2>&1
+0 8,20 * * * cd /path/to/Rent-A-Human-Agent && python3 .claude/skills/rent/scripts/bounty_hunter.py >> logs/bounty_hunter.log 2>&1
 ```
 
 ## Configuration
 
 ### Cache Settings
 
-- Cache file: `logs/bounties_cache.json`
+- Cache directory: `.claude/skills/rent/cache/`
+- Cache file: `bounties_cache.json` (JSON format)
+- Human-readable output: `bounties_ranked.txt`
 - Cache TTL: 12 hours
-- Seen bounties: `logs/bounties_seen.json`
 
 ### Scoring Criteria
 
 The AI scores bounties based on:
-- Budget amount (higher = better)
-- Clear specifications
-- Reputation of the poster
-- Difficulty vs. reward ratio
+- Budget amount and hourly rate
+- Description quality and clarity
+- Skill match with your profile
+- Remote work availability
+- Competition (spots available vs. filled)
+- Scam signal detection (crypto transfers, wallet addresses, etc.)
 
 ## Requirements
 
-See `requirements.txt` for Python dependencies.
+See `requirements.txt` for Python dependencies:
+- `requests` - HTTP client for API calls
+- `python-dotenv` - Environment variable management
 
 ## License
 
@@ -112,4 +131,4 @@ MIT License - see LICENSE file for details.
 
 ## Author
 
-Built by: x.com/@shaneswrld_ | github.com/shane9coy
+Built by: [x.com/@shaneswrld_](https://x.com/shaneswrld_) | [github.com/shane9coy](https://github.com/shane9coy)

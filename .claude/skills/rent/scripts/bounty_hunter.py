@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """
-RentAHuman Bounty Scanner
+Rent-A-Human-Agent Bounty Scanner
 
 Pulls open bounties, scores for feasibility, filters scams,
 sends top picks to Telegram. Run via cron or /rent scan.
 
 ============HOT KEYS================
-python bounty_hunter.py --jobs   # List all open job postings (raw, no scoring)
-python bounty_hunter.py --humans   # List available humans for hire
-python bounty_hunter.py --force    # Bypass cache, fresh Grok scoring
-python bounty_hunter.py --no-telegram  # Skip sending to Telegram
+python bounty_hunter.py --jobs        # List all open job postings (raw, no scoring)
+python bounty_hunter.py --humans      # List available humans for hire
+python bounty_hunter.py --force       # Bypass cache, fresh Grok scoring
+python bounty_hunter.py --no-telegram # Skip sending to Telegram
 ===================================
-**
+
+Project: Rent-A-Human-Agent
+Repo: github.com/shane9coy/Rent-A-Human-Agent
 Built by: x.com/@shaneswrld_ | github.com/shane9coy
 """
 
@@ -24,16 +26,26 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
-PROJECT_DIR = Path(__file__).parent
-load_dotenv(PROJECT_DIR / ".env")
+# Project root is 4 levels up from this script
+# .claude/skills/rent/scripts/bounty_hunter.py -> project root
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+SCRIPT_DIR = Path(__file__).parent
+
+# Skill directory is 2 levels up from this script
+# .claude/skills/rent/scripts/bounty_hunter.py -> .claude/skills/rent/
+PROJECT_DIR = Path(__file__).parent.parent
+
+# Load .env from project root
+load_dotenv(PROJECT_ROOT / ".env")
 
 RENTAHUMAN_API_KEY = os.getenv("RENTAHUMAN_API_KEY", "")
 XAI_API_KEY = os.getenv("XAI_API_KEY", "")
 RENTAHUMAN_BASE = "https://rentahuman.ai/api"
 RENTAHUMAN_WEB = "https://rentahuman.ai"
-SEEN_FILE = PROJECT_DIR / "logs" / "bounties_seen.json"
-SAVED_FILE = PROJECT_DIR / "logs" / "bounties_saved.json"
-CACHE_FILE = PROJECT_DIR / "logs" / "bounties_cache.json"
+CACHE_DIR = PROJECT_DIR / "cache"
+CACHE_DIR.mkdir(exist_ok=True)
+CACHE_FILE = CACHE_DIR / "bounties_cache.json"
+CACHE_TXT_FILE = CACHE_DIR / "bounties_ranked.txt"
 CACHE_TTL_HOURS = 12
 CACHE_VERSION = 2  # Bump to invalidate old caches (v1 had unfiltered for-hire ads)
 
@@ -107,18 +119,6 @@ def filter_jobs_only(bounties):
             continue
         jobs.append(b)
     return jobs
-
-
-def load_seen():
-    try:
-        return set(json.loads(SEEN_FILE.read_text()))
-    except Exception:
-        return set()
-
-
-def save_seen(seen):
-    SEEN_FILE.parent.mkdir(exist_ok=True)
-    SEEN_FILE.write_text(json.dumps(list(seen)[-500:]))
 
 
 # ── Scoring ──────────────────────────────────────────────
@@ -198,7 +198,7 @@ def load_cache():
 
 def save_cache(scored_bounties):
     """Save scored bounties to cache with timestamp."""
-    CACHE_FILE.parent.mkdir(exist_ok=True)
+    CACHE_DIR.mkdir(exist_ok=True)
     cache = {
         "version": CACHE_VERSION,
         "last_call": datetime.now().isoformat(),
@@ -209,6 +209,40 @@ def save_cache(scored_bounties):
         ],
     }
     CACHE_FILE.write_text(json.dumps(cache, indent=2))
+    generate_cache_txt(cache)
+
+
+def generate_cache_txt(cache):
+    """Generate human-readable TXT file from cache."""
+    cached = cache.get("bounties", [])
+    if not cached:
+        return
+    last_call = datetime.fromisoformat(cache.get("last_call", datetime.now().isoformat()))
+    model = cache.get("model", "heuristic")
+    
+    lines = [
+        f"BOUNTY SCAN RESULTS — {datetime.now().strftime('%b %d %Y %I:%M %p')}",
+        f"Scored via: {model}",
+        f"Total: {len(cached)} bounties",
+        "=" * 60,
+        "",
+    ]
+    for i, entry in enumerate(cached, 1):
+        reason = entry.get("reason", "")
+        bid = entry.get("id", "")
+        title = entry.get("title", "Untitled")
+        score = entry.get("score", "?")
+        link = f"{RENTAHUMAN_WEB}/bounties/{bid}" if bid else ""
+        lines.append(f"#{i}. [{score}/100] {title}")
+        if reason:
+            lines.append(f"    Reason: {reason}")
+        if link:
+            lines.append(f"    Link: {link}")
+        if bid:
+            lines.append(f"    ID: {bid[:8]}")
+        lines.append("")
+    
+    CACHE_TXT_FILE.write_text("\n".join(lines))
 
 
 # ── Grok Scoring ────────────────────────────────────
@@ -337,73 +371,6 @@ def format_digest(scored_bounties, limit=20):
         lines.append(format_bounty(b, s))
         lines.append("")
     lines.append(f"Scanned {datetime.now().strftime('%b %d %I:%M %p')} | {len(scored_bounties)} total scored")
-    lines.append("Save a bounty: `/rent save <id>`")
-    return "\n".join(lines)
-
-
-# ── Saved bounties ───────────────────────────────────────
-
-def load_saved():
-    try:
-        return json.loads(SAVED_FILE.read_text())
-    except Exception:
-        return []
-
-
-def save_bounty(bounty_id):
-    """Save a bounty by ID for later."""
-    bounties = fetch_bounties()
-    match = next((b for b in bounties if b.get("id", "").startswith(bounty_id)), None)
-    if not match:
-        return f"Bounty `{bounty_id}` not found."
-
-    saved = load_saved()
-    if any(s.get("id") == match["id"] for s in saved):
-        return f"Already saved: {match.get('title')}"
-
-    saved.append({
-        "id": match["id"],
-        "title": match.get("title"),
-        "price": match.get("price"),
-        "estimatedHours": match.get("estimatedHours"),
-        "category": match.get("category"),
-        "agentName": match.get("agentName"),
-        "remote": match.get("location", {}).get("isRemoteAllowed"),
-        "saved_at": datetime.now().isoformat(),
-    })
-    SAVED_FILE.parent.mkdir(exist_ok=True)
-    SAVED_FILE.write_text(json.dumps(saved, indent=2))
-    return f"Saved: [{match.get('title')}]({RENTAHUMAN_WEB}/bounties/{match['id']})"
-
-
-def unsave_bounty(bounty_id):
-    """Remove a saved bounty."""
-    saved = load_saved()
-    before = len(saved)
-    saved = [s for s in saved if not s.get("id", "").startswith(bounty_id)]
-    if len(saved) == before:
-        return f"Bounty `{bounty_id}` not in saved list."
-    SAVED_FILE.write_text(json.dumps(saved, indent=2))
-    return "Removed from saved."
-
-
-def format_saved():
-    """Format saved bounties for Telegram."""
-    saved = load_saved()
-    if not saved:
-        return "No saved bounties. Use `/rent save <id>` after scanning."
-    lines = ["**Saved Bounties**", ""]
-    for s in saved:
-        bid = s.get("id", "")
-        title = s.get("title", "Untitled")
-        price = s.get("price", "?")
-        hours = s.get("estimatedHours", "?")
-        link = f"{RENTAHUMAN_WEB}/bounties/{bid}"
-        saved_at = s.get("saved_at", "")[:10]
-        lines.append(f"[{title}]({link})")
-        lines.append(f"  ${price} / {hours}hrs | Saved: {saved_at} | `{bid[:8]}`")
-        lines.append("")
-    lines.append("Remove: `/rent unsave <id>`")
     return "\n".join(lines)
 
 
@@ -437,24 +404,22 @@ def _format_cache(cache, limit=20):
     return "\n".join(lines)
 
 
-def _background_rescore(hours, only_new, limit):
+def _background_rescore(hours, limit):
     """Background thread: fetch + Grok score + save to cache."""
     try:
         _log("Background rescore started...")
         bounties = fetch_bounties()
         bounties = filter_jobs_only(bounties)
         recent = filter_recent(bounties, hours=hours)
-        seen = load_seen()
-        candidates = [b for b in recent if b.get("id") not in seen] if only_new else recent
 
-        if not candidates:
+        if not recent:
             _log(f"No candidates to score ({len(bounties)} total)")
             return
 
-        scored = grok_score_bounties(candidates)
+        scored = grok_score_bounties(recent)
         if scored is None:
             _log("Grok failed in background — using heuristic")
-            scored = [(b, score_bounty(b)) for b in candidates]
+            scored = [(b, score_bounty(b)) for b in recent]
             scored.sort(key=lambda x: x[1], reverse=True)
             # Mark as heuristic in cache
             for b, _ in scored:
@@ -463,14 +428,12 @@ def _background_rescore(hours, only_new, limit):
         scored = [(b, s) for b, s in scored if s >= 20]
         save_cache(scored)
 
-        new_ids = {b.get("id") for b in candidates}
-        save_seen(seen | new_ids)
         _log(f"Background rescore done — {len(scored)} bounties cached")
     except Exception as e:
         _log(f"Background rescore error: {e}")
 
 
-def scan(hours=1000, only_new=False, limit=20, force=False):
+def scan(hours=1000, limit=20, force=False):
     """Run a scan. Always returns cache first, refreshes in background when stale.
 
     Set force=True to block and re-score with Grok now (waits for result).
@@ -480,29 +443,25 @@ def scan(hours=1000, only_new=False, limit=20, force=False):
 
     cache, is_fresh = load_cache()
 
-    # Force mode: block, rescore ALL bounties now (ignore seen + time filters)
+    # Force mode: block, rescore ALL bounties now
     if force:
         _log("Force mode — blocking while Grok scores...")
         bounties = fetch_bounties()
         _log(f"Fetched {len(bounties)} total, filtering for-hire ads...")
         bounties = filter_jobs_only(bounties)
         _log(f"{len(bounties)} real job postings — scoring all")
-        candidates = bounties
 
-        if not candidates:
-            return f"No new bounties in the last {hours}hrs ({len(bounties)} total checked)."
+        if not bounties:
+            return "No bounties found."
 
-        scored = grok_score_bounties(candidates)
+        scored = grok_score_bounties(bounties)
         if scored is None:
             _log("Grok unavailable — heuristic scoring")
-            scored = [(b, score_bounty(b)) for b in candidates]
+            scored = [(b, score_bounty(b)) for b in bounties]
             scored.sort(key=lambda x: x[1], reverse=True)
         scored = [(b, s) for b, s in scored if s >= 20]
 
         save_cache(scored)
-        seen = load_seen()
-        new_ids = {b.get("id") for b in candidates}
-        save_seen(seen | new_ids)
 
         digest = format_digest(scored, limit=limit)
         return digest or "No opportunities scored above threshold."
@@ -516,7 +475,7 @@ def scan(hours=1000, only_new=False, limit=20, force=False):
         else:
             _log("Cache is stale — returning cached + refreshing in background")
             thread = threading.Thread(
-                target=_background_rescore, args=(hours, only_new, limit), daemon=True
+                target=_background_rescore, args=(hours, limit), daemon=True
             )
             thread.start()
             return (result or "") + "\nPulling new data in background. Refresh in a few minutes."
@@ -526,24 +485,19 @@ def scan(hours=1000, only_new=False, limit=20, force=False):
     bounties = fetch_bounties()
     bounties = filter_jobs_only(bounties)
     recent = filter_recent(bounties, hours=hours)
-    seen = load_seen()
-    candidates = [b for b in recent if b.get("id") not in seen] if only_new else recent
 
-    if not candidates:
-        return f"No new bounties in the last {hours}hrs ({len(bounties)} total checked)."
+    if not recent:
+        return f"No bounties in the last {hours}hrs ({len(bounties)} total checked)."
 
     # Quick heuristic scores for immediate display
-    scored = [(b, score_bounty(b)) for b in candidates]
+    scored = [(b, score_bounty(b)) for b in recent]
     scored.sort(key=lambda x: x[1], reverse=True)
     scored = [(b, s) for b, s in scored if s >= 20]
     save_cache(scored)
 
-    new_ids = {b.get("id") for b in candidates}
-    save_seen(seen | new_ids)
-
     # Kick off Grok in background for next time
     thread = threading.Thread(
-        target=_background_rescore, args=(hours, only_new, limit), daemon=True
+        target=_background_rescore, args=(hours, limit), daemon=True
     )
     thread.start()
 
@@ -633,13 +587,13 @@ def main():
     skip_tg = "--no-telegram" in sys.argv
 
     _log("Bounty scanner starting...")
-    result = scan(hours=140, only_new=False, limit=20, force=force)
+    result = scan(hours=140, limit=20, force=force)
 
     print()
     print(result)
     print()
 
-    if not skip_tg and "No new bounties" not in result and "not set" not in result:
+    if not skip_tg and "No bounties" not in result and "not set" not in result:
         send_telegram(result)
         _log("Sent digest to Telegram")
     else:

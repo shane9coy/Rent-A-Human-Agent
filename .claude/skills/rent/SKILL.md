@@ -28,7 +28,7 @@ Auto-activate when the user wants to hire a person, post a job, or delegate a ta
 
 ## Bounty Scanner
 
-Script: `python3 "/Users/sc/News Letter/bounty_hunter.py"`  
+Script: `python3 .claude/skills/rent/scripts/bounty_hunter.py`  
 Cache: `logs/bounties_cache.json` (12hr TTL, Grok-3-mini-fast scoring 0–100)  
 After running: read cache file and display scored results to user.
 
@@ -44,6 +44,8 @@ python hire_team.py talk <human_id> "Message"
 python hire_team.py bounty "Title" --description "..." --price 100 --hours 2
 ```
 
+**Note:** `hire_team.py` is an optional external CLI. Primary interface is MCP via `/rent` commands.
+
 Payment via Stripe Connect escrow on RentAHuman.ai.
 
-→ Full command tree + MCP tool map: `.claude/commands/rent.md`
+→ Full command tree + MCP tool map: [`.claude/commands/rent.md`](.claude/commands/rent.md)
