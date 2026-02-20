@@ -1,6 +1,9 @@
-# Rent-A-Human-Agent
 
-Rent-A-Human-Agent utilizes modern agentic architecture with the Rent-A-Human API + MCP framework, built for scanning and scoring job opportunities in real-time on the RentAHuman.ai platform. The entire project is contained in a single `.claude` folder, ready to be dropped into any agentic workflow or project.
+"The SNES classic that never was... now available as a Python CLI tool."
+
+Introducing RENT-A-HUMAN-AGENT, bringing the power of robot bounty hunting to the everyday player.
+
+This is 'drag & drop' agentic system is ready to be powerd by your favorite CLI agent. Built for scanning and scoring job opportunities on Rentahuman.ai platform via MCP and API framework. Custom bounty_hunting script utilizes Grok AI to evaluate, filter spam, and rank bounties based on your location, skills, and ease of use to help you find the best opportunities for easy cash (Denji & Pochita approved. Your wallet, next) !
 
 <img width="1053" height="1138" alt="rentahumanagent" src="https://github.com/user-attachments/assets/590943eb-6649-4296-bdd8-5e5a08add654" />
 
